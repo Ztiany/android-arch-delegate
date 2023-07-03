@@ -16,6 +16,10 @@ import timber.log.Timber.DebugTree
 
 class MainActivity : DelegateActivity() {
 
+    init {
+        Timber.plant(DebugTree())
+    }
+
     private val mediaSelector by lazy {
         newMediaSelector(this, object : ResultListener {
             override fun onTakeSuccess(result: List<Uri>) {
@@ -33,10 +37,9 @@ class MainActivity : DelegateActivity() {
         startActivity(intent)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        Timber.plant(DebugTree())
+    override fun provideLayout() = R.layout.activity_main
+
+    override fun setUpLayout(savedInstanceState: Bundle?) {
         askNecessaryPermissions()
     }
 

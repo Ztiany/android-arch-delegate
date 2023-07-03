@@ -5,15 +5,19 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
+import com.android.base.delegate.State
 import com.android.base.delegate.activity.ActivityDelegate
+import com.android.base.delegate.activity.ActivityDelegateOwner
 
 /**
  * @author Ztiany
  */
 @UiThread
-class ActivityDelegates(private val activity: AppCompatActivity) {
+class ActivityDelegates(private val activity: AppCompatActivity) : ActivityDelegateOwner {
 
     private val delegates: MutableList<ActivityDelegate<*>> = ArrayList(4)
+
+    @Volatile private var activityState = State.INITIAL
 
     fun callOnCreateBeforeSetContentView(savedInstanceState: Bundle?) {
         for (activityDelegate in delegates) {
@@ -22,6 +26,7 @@ class ActivityDelegates(private val activity: AppCompatActivity) {
     }
 
     fun callOnCreateAfterSetContentView(savedInstanceState: Bundle?) {
+        activityState = State.CREATE
         for (activityDelegate in delegates) {
             activityDelegate.onCreateAfterSetContentView(savedInstanceState)
         }
@@ -46,30 +51,35 @@ class ActivityDelegates(private val activity: AppCompatActivity) {
     }
 
     fun callOnDestroy() {
+        activityState = State.DESTROY
         for (activityDelegate in delegates) {
             activityDelegate.onDestroy()
         }
     }
 
     fun callOnStop() {
+        activityState = State.STOP
         for (activityDelegate in delegates) {
             activityDelegate.onStop()
         }
     }
 
     fun callOnPause() {
+        activityState = State.PAUSE
         for (activityDelegate in delegates) {
             activityDelegate.onPause()
         }
     }
 
     fun callOnResume() {
+        activityState = State.RESUME
         for (activityDelegate in delegates) {
             activityDelegate.onResume()
         }
     }
 
     fun callOnStart() {
+        activityState = State.START
         for (activityDelegate in delegates) {
             activityDelegate.onStart()
         }
@@ -99,13 +109,13 @@ class ActivityDelegates(private val activity: AppCompatActivity) {
         }
     }
 
-    fun addActivityDelegate(activityDelegate: ActivityDelegate<*>) {
+    override fun addDelegate(activityDelegate: ActivityDelegate<*>) {
         delegates.add(activityDelegate)
         @Suppress("UNCHECKED_CAST")
         (activityDelegate as ActivityDelegate<Activity>).onAttachedToActivity(activity)
     }
 
-    fun removeActivityDelegate(activityDelegate: ActivityDelegate<*>): Boolean {
+    override fun removeDelegate(activityDelegate: ActivityDelegate<*>): Boolean {
         val remove = delegates.remove(activityDelegate)
         if (remove) {
             activityDelegate.onDetachedFromActivity()
@@ -113,13 +123,17 @@ class ActivityDelegates(private val activity: AppCompatActivity) {
         return remove
     }
 
-    fun findDelegate(predicate: (ActivityDelegate<*>) -> Boolean): ActivityDelegate<*>? {
+    override fun findDelegate(predicate: (ActivityDelegate<*>) -> Boolean): ActivityDelegate<*>? {
         for (delegate in delegates) {
             if (predicate(delegate)) {
                 return delegate
             }
         }
         return null
+    }
+
+    override fun getStatus(): State {
+        return activityState
     }
 
 }

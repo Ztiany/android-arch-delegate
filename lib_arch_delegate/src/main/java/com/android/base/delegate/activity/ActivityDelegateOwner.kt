@@ -1,6 +1,7 @@
 package com.android.base.delegate.activity
 
 import androidx.annotation.UiThread
+import com.android.base.delegate.State
 
 @UiThread
 interface ActivityDelegateOwner {
@@ -11,6 +12,6 @@ interface ActivityDelegateOwner {
 
     fun findDelegate(predicate: (ActivityDelegate<*>) -> Boolean): ActivityDelegate<*>?
 
-    fun getStatus(): ActivityState
+    fun getStatus(): State
 
 }

@@ -19,90 +19,90 @@ open class DelegateDialogFragment : DialogFragment(), FragmentDelegateOwner {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        fragmentDelegates.onAttach(context)
+        fragmentDelegates.callOnAttach(context)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fragmentDelegates.onCreate(savedInstanceState)
+        fragmentDelegates.callOnCreate(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fragmentDelegates.onViewCreated(view, savedInstanceState)
+        fragmentDelegates.callOnViewCreated(view, savedInstanceState)
     }
 
     @Deprecated("Deprecated in Java")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        fragmentDelegates.onActivityCreated(savedInstanceState)
+        fragmentDelegates.callOnActivityCreated(savedInstanceState)
     }
 
     override fun onStart() {
         super.onStart()
-        fragmentDelegates.onStart()
+        fragmentDelegates.callOnStart()
     }
 
     override fun onResume() {
         super.onResume()
-        fragmentDelegates.onResume()
+        fragmentDelegates.callOnResume()
     }
 
     override fun onPause() {
-        fragmentDelegates.onPause()
+        fragmentDelegates.callOnPause()
         super.onPause()
     }
 
     override fun onStop() {
-        fragmentDelegates.onStop()
+        fragmentDelegates.callOnStop()
         super.onStop()
     }
 
     override fun onDestroyView() {
-        fragmentDelegates.onDestroyView()
+        fragmentDelegates.callOnDestroyView()
         super.onDestroyView()
     }
 
     override fun onDestroy() {
-        fragmentDelegates.onDestroy()
+        fragmentDelegates.callOnDestroy()
         super.onDestroy()
     }
 
     override fun onDetach() {
-        fragmentDelegates.onDetach()
+        fragmentDelegates.callOnDetach()
         super.onDetach()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        fragmentDelegates.onSaveInstanceState(outState)
+        fragmentDelegates.callOnSaveInstanceState(outState)
         super.onSaveInstanceState(outState)
     }
 
     @Deprecated("Deprecated in Java")
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        fragmentDelegates.setUserVisibleHint(isVisibleToUser)
+        fragmentDelegates.callSetUserVisibleHint(isVisibleToUser)
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        fragmentDelegates.onHiddenChanged(hidden)
+        fragmentDelegates.callOnHiddenChanged(hidden)
     }
 
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
-        grantResults: IntArray
+        grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        fragmentDelegates.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        fragmentDelegates.callOnRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        fragmentDelegates.onActivityResult(requestCode, resultCode, data)
+        fragmentDelegates.callOnActivityResult(requestCode, resultCode, data)
     }
 
     @UiThread
@@ -119,5 +119,7 @@ open class DelegateDialogFragment : DialogFragment(), FragmentDelegateOwner {
     override fun findDelegate(predicate: (FragmentDelegate<*>) -> Boolean): FragmentDelegate<*>? {
         return fragmentDelegates.findDelegate(predicate)
     }
+
+    override fun getStatus() = fragmentDelegates.getStatus()
 
 }

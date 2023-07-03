@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.UiThread
 import androidx.fragment.app.Fragment
+import com.android.base.delegate.State
 import com.android.base.delegate.fragment.FragmentDelegate
 import com.android.base.delegate.fragment.FragmentDelegateOwner
 
@@ -13,101 +14,109 @@ import com.android.base.delegate.fragment.FragmentDelegateOwner
  * @author Ztiany
  */
 @UiThread
-class FragmentDelegates(private val fragment: Fragment) : FragmentDelegate<Fragment>, FragmentDelegateOwner {
+class FragmentDelegates(private val fragment: Fragment) : FragmentDelegateOwner {
 
     private val delegates: MutableList<FragmentDelegate<*>> = ArrayList(4)
 
-    override fun onAttach(context: Context) {
+    @Volatile internal var fragmentState = State.INITIAL
+
+    fun callOnAttach(context: Context) {
         for (fragmentDelegate in delegates) {
             fragmentDelegate.onAttach(context)
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    fun callOnCreate(savedInstanceState: Bundle?) {
+        fragmentState = State.CREATE
         for (fragmentDelegate in delegates) {
             fragmentDelegate.onCreate(savedInstanceState)
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    fun callOnViewCreated(view: View, savedInstanceState: Bundle?) {
         for (fragmentDelegate in delegates) {
             fragmentDelegate.onViewCreated(view, savedInstanceState)
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
+    fun callOnActivityCreated(savedInstanceState: Bundle?) {
         for (fragmentDelegate in delegates) {
             fragmentDelegate.onActivityCreated(savedInstanceState)
         }
     }
 
-    override fun onStart() {
+    fun callOnStart() {
+        fragmentState = State.START
         for (fragmentDelegate in delegates) {
             fragmentDelegate.onStart()
         }
     }
 
-    override fun onResume() {
+    fun callOnResume() {
+        fragmentState = State.RESUME
         for (fragmentDelegate in delegates) {
             fragmentDelegate.onResume()
         }
     }
 
-    override fun onPause() {
+    fun callOnPause() {
+        fragmentState = State.PAUSE
         for (fragmentDelegate in delegates) {
             fragmentDelegate.onPause()
         }
     }
 
-    override fun onStop() {
+    fun callOnStop() {
+        fragmentState = State.STOP
         for (fragmentDelegate in delegates) {
             fragmentDelegate.onStop()
         }
     }
 
-    override fun onDestroy() {
+    fun callOnDestroy() {
+        fragmentState = State.DESTROY
         for (fragmentDelegate in delegates) {
             fragmentDelegate.onDestroy()
         }
     }
 
-    override fun onDestroyView() {
+    fun callOnDestroyView() {
         for (fragmentDelegate in delegates) {
             fragmentDelegate.onDestroyView()
         }
     }
 
-    override fun onDetach() {
+    fun callOnDetach() {
         for (fragmentDelegate in delegates) {
             fragmentDelegate.onDetach()
         }
     }
 
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+    fun callSetUserVisibleHint(isVisibleToUser: Boolean) {
         for (fragmentDelegate in delegates) {
             fragmentDelegate.setUserVisibleHint(isVisibleToUser)
         }
     }
 
-    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+    fun callOnSaveInstanceState(savedInstanceState: Bundle) {
         for (fragmentDelegate in delegates) {
             fragmentDelegate.onSaveInstanceState(savedInstanceState)
         }
     }
 
-    override fun onHiddenChanged(hidden: Boolean) {
+    fun callOnHiddenChanged(hidden: Boolean) {
         for (fragmentDelegate in delegates) {
             fragmentDelegate.onHiddenChanged(hidden)
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    fun callOnActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         for (fragmentDelegate in delegates) {
             fragmentDelegate.onActivityResult(requestCode, resultCode, data)
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    fun callOnRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         for (fragmentDelegate in delegates) {
             fragmentDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
@@ -134,6 +143,10 @@ class FragmentDelegates(private val fragment: Fragment) : FragmentDelegate<Fragm
             }
         }
         return null
+    }
+
+    override fun getStatus(): State {
+        return fragmentState
     }
 
 }

@@ -2,11 +2,12 @@ package com.android.base.delegate.simpl
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
 import com.android.base.delegate.activity.ActivityDelegate
 import com.android.base.delegate.activity.ActivityDelegateOwner
-import com.android.base.delegate.activity.ActivityState
+import com.android.base.delegate.State
 import com.android.base.delegate.helper.ActivityDelegates
 
 /**
@@ -16,13 +17,30 @@ abstract class DelegateActivity : AppCompatActivity(), ActivityDelegateOwner {
 
     private val activityDelegates by lazy { ActivityDelegates(this) }
 
-    private var activityState = ActivityState.INITIALIZED
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        initialize(savedInstanceState)
         activityDelegates.callOnCreateBeforeSetContentView(savedInstanceState)
         super.onCreate(savedInstanceState)
+
+        when (val layout = provideLayout()) {
+            is View -> setContentView(layout)
+            is Int -> setContentView(layout)
+            null -> {
+                /*no op*/
+            }
+
+            else -> throw IllegalArgumentException("the returned layout = $layout, which is not supported.")
+        }
+
         activityDelegates.callOnCreateAfterSetContentView(savedInstanceState)
+        setUpLayout(savedInstanceState)
     }
+
+    protected open fun initialize(savedInstanceState: Bundle?) {}
+
+    protected open fun provideLayout(): Any? = null
+
+    protected abstract fun setUpLayout(savedInstanceState: Bundle?)
 
     override fun onRestart() {
         super.onRestart()
@@ -31,30 +49,25 @@ abstract class DelegateActivity : AppCompatActivity(), ActivityDelegateOwner {
 
     override fun onStart() {
         super.onStart()
-        activityState = ActivityState.START
         activityDelegates.callOnStart()
     }
 
     override fun onResume() {
         super.onResume()
-        activityState = ActivityState.RESUME
         activityDelegates.callOnResume()
     }
 
     override fun onPause() {
-        activityState = ActivityState.PAUSE
         activityDelegates.callOnPause()
         super.onPause()
     }
 
     override fun onStop() {
-        activityState = ActivityState.STOP
         activityDelegates.callOnStop()
         super.onStop()
     }
 
     override fun onDestroy() {
-        activityState = ActivityState.DESTROY
         activityDelegates.callOnDestroy()
         super.onDestroy()
     }
@@ -83,7 +96,7 @@ abstract class DelegateActivity : AppCompatActivity(), ActivityDelegateOwner {
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
-        grantResults: IntArray
+        grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         activityDelegates.callOnRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -96,12 +109,12 @@ abstract class DelegateActivity : AppCompatActivity(), ActivityDelegateOwner {
 
     @UiThread
     final override fun addDelegate(activityDelegate: ActivityDelegate<*>) {
-        activityDelegates.addActivityDelegate(activityDelegate)
+        activityDelegates.addDelegate(activityDelegate)
     }
 
     @UiThread
     final override fun removeDelegate(activityDelegate: ActivityDelegate<*>): Boolean {
-        return activityDelegates.removeActivityDelegate(activityDelegate)
+        return activityDelegates.removeDelegate(activityDelegate)
     }
 
     @UiThread
@@ -109,8 +122,8 @@ abstract class DelegateActivity : AppCompatActivity(), ActivityDelegateOwner {
         return activityDelegates.findDelegate(predicate)
     }
 
-    override fun getStatus(): ActivityState {
-        return activityState
+    override fun getStatus(): State {
+        return activityDelegates.getStatus()
     }
 
 }

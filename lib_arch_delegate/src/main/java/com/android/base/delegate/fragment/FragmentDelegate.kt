@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 interface FragmentDelegate<T : Fragment> {
 
     fun onAttachToFragment(fragment: T) {}
-
     fun onDetachFromFragment() {}
 
     fun onAttach(context: Context) {}
