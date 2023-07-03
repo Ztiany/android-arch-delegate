@@ -148,7 +148,7 @@ class ActivityDelegates(private val activity: AppCompatActivity) : ActivityDeleg
         return null
     }
 
-    override fun getStatus(): State {
+    override fun getCurrentState(): State {
         return activityState
     }
 

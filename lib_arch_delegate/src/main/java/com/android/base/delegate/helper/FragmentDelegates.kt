@@ -162,7 +162,7 @@ class FragmentDelegates(private val fragment: Fragment) : FragmentDelegateOwner 
         return null
     }
 
-    override fun getStatus(): State {
+    override fun getCurrentState(): State {
         return fragmentState
     }
 

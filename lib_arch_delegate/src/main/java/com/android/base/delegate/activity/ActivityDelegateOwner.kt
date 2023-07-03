@@ -14,6 +14,6 @@ interface ActivityDelegateOwner {
 
     fun findDelegate(predicate: (ActivityDelegate<*>) -> Boolean): ActivityDelegate<*>?
 
-    fun getStatus(): State
+    fun getCurrentState(): State
 
 }

@@ -127,6 +127,6 @@ open class DelegateFragment : Fragment(), FragmentDelegateOwner {
         return fragmentDelegates.findDelegate(predicate)
     }
 
-    override fun getStatus() = fragmentDelegates.fragmentState
+    override fun getCurrentState() = fragmentDelegates.fragmentState
 
 }

@@ -14,6 +14,6 @@ interface FragmentDelegateOwner {
 
     fun findDelegate(predicate: (FragmentDelegate<*>) -> Boolean): FragmentDelegate<*>?
 
-    fun getStatus(): State
+    fun getCurrentState(): State
 
 }

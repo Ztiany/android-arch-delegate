@@ -126,8 +126,8 @@ abstract class DelegateActivity : AppCompatActivity(), ActivityDelegateOwner {
         return activityDelegates.findDelegate(predicate)
     }
 
-    override fun getStatus(): State {
-        return activityDelegates.getStatus()
+    override fun getCurrentState(): State {
+        return activityDelegates.getCurrentState()
     }
 
 }

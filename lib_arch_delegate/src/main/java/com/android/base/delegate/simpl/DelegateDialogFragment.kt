@@ -125,6 +125,6 @@ open class DelegateDialogFragment : DialogFragment(), FragmentDelegateOwner {
         return fragmentDelegates.findDelegate(predicate)
     }
 
-    override fun getStatus() = fragmentDelegates.getStatus()
+    override fun getCurrentState() = fragmentDelegates.getCurrentState()
 
 }
