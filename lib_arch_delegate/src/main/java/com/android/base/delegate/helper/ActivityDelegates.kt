@@ -3,6 +3,7 @@ package com.android.base.delegate.helper
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
 import com.android.base.delegate.State
@@ -110,6 +111,10 @@ class ActivityDelegates(private val activity: AppCompatActivity) : ActivityDeleg
     }
 
     override fun addDelegate(activityDelegate: ActivityDelegate<*>) {
+        if (delegates.contains(activityDelegate)) {
+            Log.w("ActivityDelegates", "addDelegate: $activityDelegate has already been added.")
+            return
+        }
         delegates.add(activityDelegate)
         @Suppress("UNCHECKED_CAST")
         (activityDelegate as ActivityDelegate<Activity>).onAttachedToActivity(activity)
@@ -121,6 +126,17 @@ class ActivityDelegates(private val activity: AppCompatActivity) : ActivityDeleg
             activityDelegate.onDetachedFromActivity()
         }
         return remove
+    }
+
+    override fun removeDelegateWhile(predicate: (ActivityDelegate<*>) -> Boolean) {
+        val iterator = delegates.iterator()
+        while (iterator.hasNext()) {
+            val delegate = iterator.next()
+            if (predicate(delegate)) {
+                iterator.remove()
+                delegate.onDetachedFromActivity()
+            }
+        }
     }
 
     override fun findDelegate(predicate: (ActivityDelegate<*>) -> Boolean): ActivityDelegate<*>? {

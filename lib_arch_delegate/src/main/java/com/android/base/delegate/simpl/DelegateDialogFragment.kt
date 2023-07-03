@@ -116,6 +116,11 @@ open class DelegateDialogFragment : DialogFragment(), FragmentDelegateOwner {
     }
 
     @UiThread
+    override fun removeDelegateWhile(predicate: (FragmentDelegate<*>) -> Boolean) {
+        fragmentDelegates.removeDelegateWhile(predicate)
+    }
+
+    @UiThread
     override fun findDelegate(predicate: (FragmentDelegate<*>) -> Boolean): FragmentDelegate<*>? {
         return fragmentDelegates.findDelegate(predicate)
     }

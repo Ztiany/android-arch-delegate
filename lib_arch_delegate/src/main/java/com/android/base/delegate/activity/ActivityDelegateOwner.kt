@@ -10,6 +10,8 @@ interface ActivityDelegateOwner {
 
     fun removeDelegate(activityDelegate: ActivityDelegate<*>): Boolean
 
+    fun removeDelegateWhile(predicate: (ActivityDelegate<*>) -> Boolean)
+
     fun findDelegate(predicate: (ActivityDelegate<*>) -> Boolean): ActivityDelegate<*>?
 
     fun getStatus(): State

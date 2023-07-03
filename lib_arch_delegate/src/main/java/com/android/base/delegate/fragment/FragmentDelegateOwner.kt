@@ -10,6 +10,8 @@ interface FragmentDelegateOwner {
 
     fun removeDelegate(fragmentDelegate: FragmentDelegate<*>): Boolean
 
+    fun removeDelegateWhile(predicate: (FragmentDelegate<*>) -> Boolean)
+
     fun findDelegate(predicate: (FragmentDelegate<*>) -> Boolean): FragmentDelegate<*>?
 
     fun getStatus(): State

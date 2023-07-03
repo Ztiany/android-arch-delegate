@@ -3,6 +3,7 @@ package com.android.base.delegate.helper
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.annotation.UiThread
 import androidx.fragment.app.Fragment
@@ -123,6 +124,10 @@ class FragmentDelegates(private val fragment: Fragment) : FragmentDelegateOwner 
     }
 
     override fun addDelegate(fragmentDelegate: FragmentDelegate<*>) {
+        if (delegates.contains(fragmentDelegate)) {
+            Log.w("FragmentDelegates", "addDelegate: $fragmentDelegate has already been added.")
+            return
+        }
         delegates.add(fragmentDelegate)
         @Suppress("UNCHECKED_CAST")
         (fragmentDelegate as FragmentDelegate<Fragment>).onAttachToFragment(fragment)
@@ -134,6 +139,18 @@ class FragmentDelegates(private val fragment: Fragment) : FragmentDelegateOwner 
             fragmentDelegate.onDetachFromFragment()
         }
         return remove
+    }
+
+    @UiThread
+    override fun removeDelegateWhile(predicate: (FragmentDelegate<*>) -> Boolean) {
+        val listIterator = delegates.listIterator()
+        while (listIterator.hasNext()) {
+            val next = listIterator.next()
+            if (predicate(next)) {
+                listIterator.remove()
+                next.onDetachFromFragment()
+            }
+        }
     }
 
     override fun findDelegate(predicate: (FragmentDelegate<*>) -> Boolean): FragmentDelegate<*>? {
