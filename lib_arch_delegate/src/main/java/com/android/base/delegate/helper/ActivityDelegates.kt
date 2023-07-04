@@ -13,7 +13,6 @@ import com.android.base.delegate.activity.ActivityDelegateOwner
 /**
  * @author Ztiany
  */
-@UiThread
 class ActivityDelegates(private val activity: AppCompatActivity) : ActivityDelegateOwner {
 
     private val delegates: MutableList<ActivityDelegate<*>> = ArrayList(4)
@@ -110,6 +109,7 @@ class ActivityDelegates(private val activity: AppCompatActivity) : ActivityDeleg
         }
     }
 
+    @UiThread
     override fun addDelegate(activityDelegate: ActivityDelegate<*>) {
         if (delegates.contains(activityDelegate)) {
             Log.w("ActivityDelegates", "addDelegate: $activityDelegate has already been added.")
@@ -120,6 +120,7 @@ class ActivityDelegates(private val activity: AppCompatActivity) : ActivityDeleg
         (activityDelegate as ActivityDelegate<Activity>).onAttachedToActivity(activity)
     }
 
+    @UiThread
     override fun removeDelegate(activityDelegate: ActivityDelegate<*>): Boolean {
         val remove = delegates.remove(activityDelegate)
         if (remove) {
@@ -128,6 +129,7 @@ class ActivityDelegates(private val activity: AppCompatActivity) : ActivityDeleg
         return remove
     }
 
+    @UiThread
     override fun removeDelegateWhile(predicate: (ActivityDelegate<*>) -> Boolean) {
         val iterator = delegates.iterator()
         while (iterator.hasNext()) {
@@ -139,6 +141,7 @@ class ActivityDelegates(private val activity: AppCompatActivity) : ActivityDeleg
         }
     }
 
+    @UiThread
     override fun findDelegate(predicate: (ActivityDelegate<*>) -> Boolean): ActivityDelegate<*>? {
         for (delegate in delegates) {
             if (predicate(delegate)) {

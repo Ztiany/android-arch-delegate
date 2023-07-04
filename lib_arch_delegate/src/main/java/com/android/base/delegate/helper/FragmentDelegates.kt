@@ -14,7 +14,6 @@ import com.android.base.delegate.fragment.FragmentDelegateOwner
 /**
  * @author Ztiany
  */
-@UiThread
 class FragmentDelegates(private val fragment: Fragment) : FragmentDelegateOwner {
 
     private val delegates: MutableList<FragmentDelegate<*>> = ArrayList(4)
@@ -123,6 +122,7 @@ class FragmentDelegates(private val fragment: Fragment) : FragmentDelegateOwner 
         }
     }
 
+    @UiThread
     override fun addDelegate(fragmentDelegate: FragmentDelegate<*>) {
         if (delegates.contains(fragmentDelegate)) {
             Log.w("FragmentDelegates", "addDelegate: $fragmentDelegate has already been added.")
@@ -133,6 +133,7 @@ class FragmentDelegates(private val fragment: Fragment) : FragmentDelegateOwner 
         (fragmentDelegate as FragmentDelegate<Fragment>).onAttachToFragment(fragment)
     }
 
+    @UiThread
     override fun removeDelegate(fragmentDelegate: FragmentDelegate<*>): Boolean {
         val remove = delegates.remove(fragmentDelegate)
         if (remove) {
@@ -153,6 +154,7 @@ class FragmentDelegates(private val fragment: Fragment) : FragmentDelegateOwner 
         }
     }
 
+    @UiThread
     override fun findDelegate(predicate: (FragmentDelegate<*>) -> Boolean): FragmentDelegate<*>? {
         for (delegate in delegates) {
             if (predicate(delegate)) {

@@ -73,12 +73,14 @@ open class LazyLoadDelegate private constructor() : FragmentDelegate<Fragment> {
     }
 
     companion object {
+
         fun attach(delegateFragment: FragmentDelegateOwner, onPreparedListener: () -> Unit): LazyLoadDelegate {
             val delegate = LazyLoadDelegate()
             delegate.preparedListener = onPreparedListener
             delegateFragment.addDelegate(delegate)
             return delegate
         }
+
     }
 
 }

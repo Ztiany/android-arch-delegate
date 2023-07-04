@@ -117,6 +117,7 @@ abstract class DelegateActivity : AppCompatActivity(), ActivityDelegateOwner {
         return activityDelegates.removeDelegate(activityDelegate)
     }
 
+    @UiThread
     override fun removeDelegateWhile(predicate: (ActivityDelegate<*>) -> Boolean) {
         activityDelegates.removeDelegateWhile(predicate)
     }
