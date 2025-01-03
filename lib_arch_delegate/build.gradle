@@ -1,16 +1,18 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     id "com.android.library"
     id "kotlin-android"
+    id "com.vanniktech.maven.publish" version "0.30.0"
 }
 
-apply plugin: "com.vanniktech.maven.publish"
-
 android {
-    compileSdkVersion 33
+    namespace "com.android.base.delegate"
+    compileSdk 33
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0.1"
     }
@@ -20,22 +22,55 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
-
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     compileOnly "androidx.appcompat:appcompat:1.6.1"
     compileOnly "androidx.activity:activity-ktx:1.7.2"
     compileOnly "androidx.fragment:fragment-ktx:1.6.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
+}
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.20"
+mavenPublishing {
+    // configuring maven central
+    // or when publishing to https://central.sonatype.com/
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
+
+    // configuring the pom
+    coordinates("io.github.ztiany", "android-arch-delegate", "2.0.0")
+
+    pom {
+        name = "android-arch-delegate"
+        description = "delegate methods of Activities and Fragments."
+        inceptionYear = "2020"
+        url = "https://github.com/Ztiany/android-arch-delegate/"
+        licenses {
+            license {
+                name = "The Apache License, Version 2.0"
+                url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            }
+        }
+        developers {
+            developer {
+                id = "ztiany"
+                name = "Alien"
+                url = "https://github.com/Ztiany/"
+            }
+        }
+        scm {
+            url = "https://github.com/Ztiany/android-arch-delegate/"
+            connection = "scm:git:git://github.com/Ztiany/android-arch-delegate.git"
+            developerConnection = "scm:git:ssh://git@github.com/Ztiany/android-arch-delegate.git"
+        }
+    }
 }
